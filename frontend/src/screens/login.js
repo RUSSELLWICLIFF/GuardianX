@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity } from 'react-native';
-import { loginUser } from '../services/authService';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity, Image } from 'react-native';
+import { loginUser } from '../services/mockAuthService';
 import { colors } from '../styles/theme';
 
 export default function LoginScreen({ navigation }) {
@@ -39,8 +39,11 @@ export default function LoginScreen({ navigation }) {
       {/* Top Section (White) */}
       <View style={styles.topSection}>
         <View style={styles.imagePlaceholder}>
-          <Text style={{ fontSize: 80 }}>📱</Text>
-          {/* In a real app, put the illustration image here */}
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
       </View>
 
@@ -100,10 +103,12 @@ export default function LoginScreen({ navigation }) {
 
               <View style={styles.socialButtons}>
                 <TouchableOpacity style={styles.socialButton}>
-                  <Text style={styles.socialText}>G Google</Text>
+                  <Text style={styles.socialIcon}>G</Text>
+                  <Text style={styles.socialText}>Google</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.socialButton}>
-                  <Text style={styles.socialText}>f Facebook</Text>
+                  <Text style={styles.socialIcon}>f</Text>
+                  <Text style={styles.socialText}>Facebook</Text>
                 </TouchableOpacity>
               </View>
 
@@ -139,6 +144,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  logoImage: {
+    width: 150,
+    height: 150,
+  },
   bottomSection: {
     flex: 0.6,
     backgroundColor: '#C2185B', // Deep Pink
@@ -156,7 +165,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.15)', // Lighter glass effect
     borderRadius: 8,
     marginBottom: 15,
     paddingHorizontal: 15,
@@ -180,17 +189,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   loginButton: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: '#FFF', // Solid White
     borderRadius: 25,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.5)',
+    elevation: 2, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   loginButtonText: {
-    color: '#FFF',
+    color: '#C2185B', // Deep Pink Text
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -219,13 +231,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
-    // backgroundColor: 'rgba(255,255,255,0.1)',
-    // borderRadius: 8,
+    height: 45, // Slightly taller
+    borderRadius: 25, // Full pill shape
+    backgroundColor: '#FFF', // Solid White
+    elevation: 2, // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
   },
   socialText: {
-    color: '#FFF',
+    color: '#C2185B', // Deep Pink text
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  socialIcon: {
+    color: '#C2185B',
+    fontSize: 18,
+    fontWeight: '900',
+    marginRight: 10,
   },
   signupContainer: {
     flexDirection: 'row',

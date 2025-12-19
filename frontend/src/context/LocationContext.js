@@ -17,9 +17,9 @@ export const LocationProvider = ({ children }) => {
     const [tracking, setTracking] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        requestLocationPermission();
-    }, []);
+    // useEffect(() => {
+    //     requestLocationPermission();
+    // }, []);
 
     useEffect(() => {
         let subscription;
@@ -45,15 +45,18 @@ export const LocationProvider = ({ children }) => {
             setLocationPermission(status === 'granted');
 
             if (status === 'granted') {
-                // Get initial location
-                const initialLocation = await Location.getCurrentPositionAsync({
-                    accuracy: Location.Accuracy.High
-                });
-                setLocation(initialLocation.coords);
+                // Check if location services are enabled before fetching
+                const enabled = await Location.hasServicesEnabledAsync();
+                if (enabled) {
+                    const initialLocation = await Location.getCurrentPositionAsync({
+                        accuracy: Location.Accuracy.High
+                    });
+                    setLocation(initialLocation.coords);
+                }
             }
         } catch (err) {
-            console.error('Location permission error:', err);
-            setError(err.message);
+            console.log('Location permission/services check:', err.message);
+            // Don't set hard error state for permissions to avoid blocking app flow
         }
     };
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity } from 'react-native';
-import { registerUser } from '../services/authService';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity, Image } from 'react-native';
+import { registerUser } from '../services/mockAuthService';
 import { colors } from '../styles/theme';
 
 export default function RegisterScreen({ navigation }) {
@@ -45,10 +45,17 @@ export default function RegisterScreen({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
 
       {/* Top Section (White) */}
+      {/* Top Section (White) */}
       <View style={styles.topSection}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={{ fontSize: 80 }}>🔐</Text>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
+        <Text style={styles.brandTitle}>GuardianX</Text>
+        <Text style={styles.headerSubtitle}>Create your account</Text>
       </View>
 
       {/* Bottom Section (Pink) */}
@@ -65,7 +72,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.inputIcon}>👤</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="FULL NAME"
+                  placeholder="FULL NAME *"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={name}
                   onChangeText={setName}
@@ -76,7 +83,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.inputIcon}>✉️</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="EMAIL"
+                  placeholder="EMAIL *"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={email}
                   onChangeText={setEmail}
@@ -89,7 +96,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.inputIcon}>📱</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="PHONE NUMBER"
+                  placeholder="PHONE NUMBER *"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={phone}
                   onChangeText={setPhone}
@@ -101,7 +108,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.inputIcon}>🔒</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="PASSWORD"
+                  placeholder="PASSWORD *"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={password}
                   onChangeText={setPassword}
@@ -113,7 +120,7 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.inputIcon}>🔒</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="CONFIRM PASSWORD"
+                  placeholder="CONFIRM PASSWORD *"
                   placeholderTextColor="rgba(255,255,255,0.7)"
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
@@ -130,6 +137,23 @@ export default function RegisterScreen({ navigation }) {
                   {loading ? 'Creating Account...' : 'Sign Up'}
                 </Text>
               </TouchableOpacity>
+
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OR</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <View style={styles.socialButtons}>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialIcon}>G</Text>
+                  <Text style={styles.socialText}>Google</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialIcon}>f</Text>
+                  <Text style={styles.socialText}>Facebook</Text>
+                </TouchableOpacity>
+              </View>
 
               <View style={styles.loginContainer}>
                 <Text style={styles.loginText}>Already have an account? </Text>
@@ -156,20 +180,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 20,
   },
-  imagePlaceholder: {
+  logoContainer: {
     width: 100,
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 10,
+  },
+  logoImage: {
+    width: 80,
+    height: 80,
+  },
+  brandTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#C2185B',
+    marginBottom: 5,
+    letterSpacing: 1,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#666',
   },
   bottomSection: {
-    flex: 0.75,
-    backgroundColor: '#C2185B', // Deep Pink
+    flex: 0.8, // Increased height for form
+    backgroundColor: '#C2185B',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 30,
-    paddingTop: 40,
+    paddingTop: 30,
   },
   keyboardView: {
     flex: 1,
@@ -180,9 +227,9 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 12, // Reduced margin to fit content
     paddingHorizontal: 15,
     height: 50,
   },
@@ -198,24 +245,73 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signupButton: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: '#FFF',
     borderRadius: 25,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.5)',
+    marginBottom: 20,
+    marginTop: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   signupButtonText: {
-    color: '#FFF',
+    color: '#C2185B',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  dividerText: {
+    color: '#FFF',
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  socialButton: {
+    flex: 0.48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 45, // Slightly taller
+    borderRadius: 25, // Full pill shape
+    backgroundColor: '#FFF', // Solid White
+    elevation: 2, // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+  },
+  socialText: {
+    color: '#C2185B', // Deep Pink text
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  socialIcon: {
+    color: '#C2185B',
+    fontSize: 18,
+    fontWeight: '900',
+    marginRight: 10,
   },
   loginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginBottom: 20,
   },
   loginText: {
     color: 'rgba(255,255,255,0.7)',

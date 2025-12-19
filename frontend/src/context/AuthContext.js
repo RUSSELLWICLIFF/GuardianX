@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { onAuthChange, getCurrentUser, getUserData } from '../services/authService';
+import { onAuthChange, getCurrentUser, getUserData, logoutUser } from '../services/mockAuthService';
 
 const AuthContext = createContext();
 
@@ -40,10 +40,17 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
+    const logout = async () => {
+        await logoutUser();
+        setUser(null);
+        setUserData(null);
+    };
+
     const value = {
-        user, // Firebase user object
-        userData, // Additional user data from Firestore
+        user,
+        userData,
         loading,
+        logout
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

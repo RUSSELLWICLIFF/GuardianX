@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { getContacts } from '../utils/storage';
+import { colors, shadows } from '../styles/theme';
 
 export default function HomeScreen({ navigation }) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [contactsCount, setContactsCount] = useState(0);
 
   useEffect(() => {
@@ -17,62 +18,94 @@ export default function HomeScreen({ navigation }) {
       const contacts = await getContacts();
       setContactsCount(contacts.length);
     } catch (error) {
-      console.error('Error:', error);
       setContactsCount(0);
     }
   };
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', onPress: () => logout() },
-    ]);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.brandPrimary} />
+
+      {/* Curved Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome, {user?.name || 'User'}</Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.greetingText}>Hello,</Text>
+            <Text style={styles.userName}>{user?.displayName || 'User'}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <Text style={styles.profileInitials}>
+              {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Safety Status Card */}
+        <View style={styles.statusCard}>
+          <View style={styles.statusRow}>
+            <View style={styles.statusDot} />
+            <Text style={styles.statusText}>Active Protection</Text>
+          </View>
+          <Text style={styles.statusSubtext}>Reviewing route & safety status</Text>
+        </View>
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Emergency Contacts</Text>
-          <Text style={styles.cardValue}>{contactsCount}/5</Text>
-        </View>
+      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
 
+        {/* EMERGENCY SOS HERO BUTTON */}
         <TouchableOpacity
-          style={styles.sosButton}
+          style={styles.heroSosButton}
           onPress={() => navigation.navigate('SOS')}
+          activeOpacity={0.9}
         >
-          <Text style={styles.sosText}>🚨 Emergency SOS</Text>
+          <View style={styles.sosInnerCircle}>
+            <Text style={styles.sosEmoji}>🚨</Text>
+            <Text style={styles.sosTitle}>SOS</Text>
+          </View>
         </TouchableOpacity>
+        <Text style={styles.sosLabel}>Tap for Emergency Help</Text>
 
-        <TouchableOpacity
-          style={styles.contactsButton}
-          onPress={() => navigation.navigate('Contacts')}
-        >
-          <Text style={styles.contactsText}>👥 Manage Contacts</Text>
-        </TouchableOpacity>
+        {/* Quick Actions Grid */}
+        <View style={styles.gridContainer}>
+          <TouchableOpacity
+            style={styles.gridCard}
+            onPress={() => navigation.navigate('Contacts')}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: '#E3F2FD' }]}>
+              <Text style={styles.cardEmoji}>👥</Text>
+            </View>
+            <Text style={styles.gridTitle}>Contacts</Text>
+            <Text style={styles.gridSub}>{contactsCount} Active</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.routeButton}
-          onPress={() => navigation.navigate('RouteTracking')}
-        >
-          <Text style={styles.routeText}>📍 Track My Route</Text>
-        </TouchableOpacity>
-
-        <View style={styles.tips}>
-          <Text style={styles.tipsTitle}>Safety Tips</Text>
-          <Text style={styles.tip}>• Keep phone charged</Text>
-          <Text style={styles.tip}>• Update contacts regularly</Text>
-          <Text style={styles.tip}>• Enable location services</Text>
+          <TouchableOpacity
+            style={styles.gridCard}
+            onPress={() => navigation.navigate('RouteTracking')}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: '#E8F5E9' }]}>
+              <Text style={styles.cardEmoji}>📍</Text>
+            </View>
+            <Text style={styles.gridTitle}>Track Me</Text>
+            <Text style={styles.gridSub}>Live Location</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Safety Tips */}
+        <View style={styles.tipsContainer}>
+          <Text style={styles.sectionTitle}>Daily Safety Tips</Text>
+          <View style={styles.tipCard}>
+            <Text style={styles.tipText}>🔋 Keep your phone charged above 20%</Text>
+          </View>
+          <View style={styles.tipCard}>
+            <Text style={styles.tipText}>👥 Share your live location when traveling alone</Text>
+          </View>
+        </View>
+
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -82,99 +115,172 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   header: {
+    backgroundColor: colors.brandPrimary,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    paddingTop: 50,
+    paddingBottom: 30, // Space for the overlapping card
+    paddingHorizontal: 25,
+    ...shadows.md,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#FF4858',
+    marginBottom: 25,
   },
-  title: {
+  greetingText: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 16,
+  },
+  userName: {
+    color: '#FFF',
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFF',
   },
-  logoutBtn: {
-    padding: 8,
+  profileButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
-  logoutText: {
+  profileInitials: {
     color: '#FFF',
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  statusCard: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 15,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#4CD964',
+    marginRight: 8,
+  },
+  statusText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  statusSubtext: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 12,
+    marginLeft: 16,
   },
   content: {
     flex: 1,
-    padding: 16,
   },
-  card: {
-    backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
+  scrollContent: {
+    padding: 25,
     alignItems: 'center',
   },
-  cardTitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-  },
-  cardValue: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FF4858',
-  },
-  sosButton: {
-    backgroundColor: '#FF4858',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  sosText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  contactsButton: {
+  heroSosButton: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
     backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#FF4858',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadows.lg,
+    shadowColor: colors.brandPrimary,
+    shadowOpacity: 0.3,
+    elevation: 10,
+    marginBottom: 15,
+    marginTop: 10,
   },
-  contactsText: {
-    color: '#FF4858',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  sosInnerCircle: {
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: colors.brandPrimary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#FFE0E9',
   },
-  routeButton: {
-    backgroundColor: '#4A90E2',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
+  sosEmoji: {
+    fontSize: 40,
+    marginBottom: 5,
   },
-  routeText: {
+  sosTitle: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
-  tips: {
-    backgroundColor: '#FFF',
-    padding: 16,
-    borderRadius: 12,
-  },
-  tipsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
-  },
-  tip: {
+  sosLabel: {
+    color: '#888',
     fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    marginBottom: 40,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 30,
+  },
+  gridCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    width: '48%',
+    ...shadows.sm,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cardEmoji: {
+    fontSize: 20,
+  },
+  gridTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  gridSub: {
+    fontSize: 12,
+    color: '#999',
+  },
+  tipsContainer: {
+    width: '100%',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+  },
+  tipCard: {
+    backgroundColor: '#FFF',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...shadows.xs,
+  },
+  tipText: {
+    color: '#555',
+    fontSize: 14,
   },
 });

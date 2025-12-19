@@ -16,13 +16,15 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-import { getApps, getApp, initializeApp } from 'firebase/app';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
+// import { getApps, getApp, initializeApp } from 'firebase/app';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
 
 let app;
 let auth;
 
+// MOCK MODE: Firebase initialization disabled to prevent crashes with invalid keys.
+/*
 if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
     auth = initializeAuth(app, {
@@ -32,10 +34,11 @@ if (getApps().length === 0) {
     app = getApp();
     auth = getAuth(app);
 }
+*/
 
 export { auth };
-export const db = getFirestore(app);
-export const functions = getFunctions(app);
+// export const db = getFirestore(app);
+// export const functions = getFunctions(app);
 
 // Export the app instance
 export default app;
