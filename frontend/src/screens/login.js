@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity } from 'react-native';
 import { loginUser } from '../services/authService';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import { colors, typography, spacing, borderRadius, shadows } from '../styles/theme';
+import { colors } from '../styles/theme';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -15,198 +11,233 @@ export default function LoginScreen({ navigation }) {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    if (!password.trim()) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
+    if (!email.trim()) newErrors.email = 'Email is required';
+    if (!password.trim()) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-
     setLoading(true);
     try {
       const result = await loginUser(email.trim(), password);
-
-      if (result.success) {
-        // Navigation is handled automatically by AuthContext
-        // No need to manually navigate
-      } else {
-        Alert.alert('Login Failed', result.error || 'Please check your credentials and try again.');
+      if (!result.success) {
+        Alert.alert('Login Failed', result.error);
       }
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      Alert.alert('Error', 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <LinearGradient
-      colors={['#FF4858', '#FF6B7A', '#FFA8B0']}
-      style={styles.container}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
-      <StatusBar barStyle="light-content" backgroundColor="#FF4858" />
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+
+      {/* Top Section (White) */}
+      <View style={styles.topSection}>
+        <View style={styles.imagePlaceholder}>
+          <Text style={{ fontSize: 80 }}>📱</Text>
+          {/* In a real app, put the illustration image here */}
+        </View>
+      </View>
+
+      {/* Bottom Section (Pink) */}
+      <View style={styles.bottomSection}>
         <KeyboardAvoidingView
-          style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.headerContent}>
-              <View style={styles.logoContainer}>
-                <Text style={styles.logo}>🛡️</Text>
-              </View>
-              <Text style={styles.title}>GuardianX</Text>
-              <Text style={styles.subtitle}>Your Safety Companion</Text>
-            </View>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-            <View style={styles.formCard}>
-              <Text style={styles.formTitle}>Welcome Back</Text>
-              <Text style={styles.formSubtitle}>Sign in to continue</Text>
-
-              <Input
-                label="Email"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errors.email) setErrors({ ...errors, email: '' });
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                error={errors.email}
-              />
-
-              <Input
-                label="Password"
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (errors.password) setErrors({ ...errors, password: '' });
-                }}
-                secureTextEntry
-                error={errors.password}
-              />
-
-              <Button
-                title="Login"
-                onPress={handleLogin}
-                loading={loading}
-                style={styles.loginButton}
-              />
-
-              <View style={styles.registerLink}>
-                <Text style={styles.registerText}>Don't have an account? </Text>
-                <Button
-                  title="Sign Up"
-                  onPress={() => navigation.navigate('Register')}
-                  variant="outline"
-                  size="small"
-                  style={styles.signupButton}
+            <View style={styles.formContainer}>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>✉️</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="EMAIL"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
                 />
               </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🔒</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={handleLogin}
+                disabled={loading}
+              >
+                <Text style={styles.loginButtonText}>
+                  {loading ? 'Signing In...' : 'Sign In'}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OR</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <View style={styles.socialButtons}>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialText}>G Google</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialText}>f Facebook</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.signupContainer}>
+                <Text style={styles.signupText}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                  <Text style={styles.signupLink}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
-    </LinearGradient>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
-  safeArea: {
-    flex: 1,
-  },
-  headerContent: {
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  topSection: {
+    flex: 0.4,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.md,
   },
-  logo: {
-    fontSize: 50,
+  imagePlaceholder: {
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    ...typography.h1,
-    color: colors.white,
-    marginBottom: spacing.xs,
-    fontSize: 36,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    ...typography.body,
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 16,
+  bottomSection: {
+    flex: 0.6,
+    backgroundColor: '#C2185B', // Deep Pink
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 30,
+    paddingTop: 40,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingBottom: 20,
   },
-  formCard: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    ...shadows.lg,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    height: 50,
   },
-  formTitle: {
-    ...typography.h2,
-    color: colors.text,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
+  inputIcon: {
+    marginRight: 10,
+    fontSize: 16,
+    color: '#FFF',
   },
-  formSubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
+  input: {
+    flex: 1,
+    color: '#FFF',
+    height: '100%',
+    fontSize: 14,
+  },
+  forgotPassword: {
+    color: '#FFF',
+    textAlign: 'right',
+    marginBottom: 30,
+    fontSize: 12,
   },
   loginButton: {
-    marginTop: spacing.lg,
-  },
-  registerLink: {
-    marginTop: spacing.xl,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 25,
+    height: 50,
+    justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  loginButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  dividerText: {
+    color: '#FFF',
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 30,
+  },
+  socialButton: {
+    flex: 0.48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    // backgroundColor: 'rgba(255,255,255,0.1)',
+    // borderRadius: 8,
+  },
+  socialText: {
+    color: '#FFF',
+    fontSize: 14,
+  },
+  signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  registerText: {
-    ...typography.body,
-    color: colors.textSecondary,
+  signupText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
   },
-  signupButton: {
-    minWidth: 100,
+  signupLink: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

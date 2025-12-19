@@ -1,9 +1,15 @@
 // Color scheme and design tokens
 export const colors = {
     // Primary colors with richer tones
-    primary: '#FF4858',
-    primaryDark: '#E63946',
-    primaryLight: '#FF6B7A',
+    primary: '#D81B60', // Deep Pink
+    primaryDark: '#AD1457',
+    primaryLight: '#F06292',
+
+    // Brand Colors (Move Safety Theme)
+    brandPrimary: '#C2185B',
+    brandSecondary: '#E91E63',
+    brandGradientStart: '#D81B60',
+    brandGradientEnd: '#880E4F',
 
     // Secondary colors
     secondary: '#457B9D',

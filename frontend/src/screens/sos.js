@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SMS from 'expo-sms';
-import { useAuth } from '../../context/AuthContext';
-import { getContacts } from '../../utils/storage';
-import { getCurrentLocation, formatLocationForSMS } from '../../utils/location';
-import Button from '../../components/Button';
-import { colors, typography, spacing, borderRadius, shadows } from '../../styles/theme';
+import { useAuth } from '../context/AuthContext';
+import { getContacts } from '../utils/storage';
+import { getCurrentLocation, formatLocationForSMS } from '../utils/location';
+import Button from '../components/Button';
+import { colors, typography, spacing, borderRadius, shadows } from '../styles/theme';
 
 export default function SosScreen({ navigation }) {
   const { user } = useAuth();

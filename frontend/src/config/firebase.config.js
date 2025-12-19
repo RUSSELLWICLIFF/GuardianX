@@ -3,10 +3,6 @@
 // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
 // Get these from: Firebase Console > Project Settings > General > Your apps > Web app
 
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions';
 
 // Firebase configuration object
 // TODO: Replace with your actual Firebase project credentials
@@ -20,10 +16,24 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+import { getApps, getApp, initializeApp } from 'firebase/app';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
 
-// Initialize Firebase services
-export const auth = getAuth(app);
+let app;
+let auth;
+
+if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+    auth = initializeAuth(app, {
+        persistence: getReactNativePersistence(AsyncStorage)
+    });
+} else {
+    app = getApp();
+    auth = getAuth(app);
+}
+
+export { auth };
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
 

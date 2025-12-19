@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../context/AuthContext';
-import { getContacts } from '../../utils/storage';
+import { useAuth } from '../context/AuthContext';
+import { getContacts } from '../utils/storage';
 
 export default function HomeScreen({ navigation }) {
   const { user, logout } = useAuth();

@@ -8,11 +8,11 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import { getContacts, saveContacts } from '../../utils/storage';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
-import ContactCard from '../../components/ContactCard';
-import { colors, typography, spacing, borderRadius, shadows } from '../../styles/theme';
+import { getContacts, saveContacts } from '../utils/storage';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import ContactCard from '../components/ContactCard';
+import { colors, typography, spacing, borderRadius, shadows } from '../styles/theme';
 
 const MAX_CONTACTS = 5;
 

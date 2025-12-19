@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert, StatusBar, TextInput, TouchableOpacity } from 'react-native';
 import { registerUser } from '../services/authService';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import { colors, typography, spacing, borderRadius, shadows } from '../styles/theme';
+import { colors } from '../styles/theme';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -18,252 +14,216 @@ export default function RegisterScreen({ navigation }) {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
-    }
-
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    if (!phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\d{10}$/.test(phone.replace(/[-()\ s]/g, ''))) {
-      newErrors.phone = 'Please enter a valid 10-digit phone number';
-    }
-
-    if (!password.trim()) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!email.trim()) newErrors.email = 'Email is required';
+    if (!phone.trim()) newErrors.phone = 'Phone is required';
+    if (!password.trim()) newErrors.password = 'Password is required';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleRegister = async () => {
     if (!validateForm()) return;
-
     setLoading(true);
     try {
       const result = await registerUser(email.trim(), password, name.trim(), phone.trim());
-
       if (result.success) {
-        Alert.alert(
-          'Success',
-          'Account created successfully!',
-          [{ text: 'OK' }]
-        );
-        // Navigation handled automatically by AuthContext
+        Alert.alert('Success', 'Account created successfully!', [{ text: 'OK' }]);
       } else {
-        Alert.alert('Registration Failed', result.error || 'Failed to create account. Please try again.');
+        Alert.alert('Registration Failed', result.error);
       }
     } catch (error) {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      Alert.alert('Error', 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <LinearGradient
-      colors={['#FF4858', '#FF6B7A', '#FFA8B0']}
-      style={styles.container}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+
+      {/* Top Section (White) */}
+      <View style={styles.topSection}>
+        <View style={styles.imagePlaceholder}>
+          <Text style={{ fontSize: 80 }}>🔐</Text>
+        </View>
+      </View>
+
+      {/* Bottom Section (Pink) */}
+      <View style={styles.bottomSection}>
         <KeyboardAvoidingView
-          style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.headerContent}>
-              <View style={styles.logoContainer}>
-                <Text style={styles.logo}>🛡️</Text>
-              </View>
-              <Text style={styles.title}>Join GuardianX</Text>
-              <Text style={styles.subtitle}>Create your safety account</Text>
-            </View>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-            <View style={styles.formCard}>
-              <Text style={styles.formTitle}>Create Account</Text>
-              <Text style={styles.formSubtitle}>Sign up to get started</Text>
+            <View style={styles.formContainer}>
 
-              <Input
-                label="Full Name"
-                placeholder="Enter your full name"
-                value={name}
-                onChangeText={(text) => {
-                  setName(text);
-                  if (errors.name) setErrors({ ...errors, name: '' });
-                }}
-                error={errors.name}
-              />
-
-              <Input
-                label="Email"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errors.email) setErrors({ ...errors, email: '' });
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                error={errors.email}
-              />
-
-              <Input
-                label="Phone Number"
-                placeholder="Enter your phone number"
-                value={phone}
-                onChangeText={(text) => {
-                  setPhone(text);
-                  if (errors.phone) setErrors({ ...errors, phone: '' });
-                }}
-                keyboardType="phone-pad"
-                error={errors.phone}
-              />
-
-              <Input
-                label="Password"
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (errors.password) setErrors({ ...errors, password: '' });
-                }}
-                secureTextEntry
-                error={errors.password}
-              />
-
-              <Input
-                label="Confirm Password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChangeText={(text) => {
-                  setConfirmPassword(text);
-                  if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: '' });
-                }}
-                secureTextEntry
-                error={errors.confirmPassword}
-              />
-
-              <Button
-                title="Sign Up"
-                onPress={handleRegister}
-                loading={loading}
-                style={styles.registerButton}
-              />
-
-              <View style={styles.loginLink}>
-                <Text style={styles.loginText}>Already have an account? </Text>
-                <Button
-                  title="Login"
-                  onPress={() => navigation.navigate('Login')}
-                  variant="outline"
-                  size="small"
-                  style={styles.loginButton}
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>👤</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="FULL NAME"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={name}
+                  onChangeText={setName}
                 />
               </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>✉️</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="EMAIL"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>📱</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="PHONE NUMBER"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🔒</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="PASSWORD"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🔒</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="CONFIRM PASSWORD"
+                  placeholderTextColor="rgba(255,255,255,0.7)"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity
+                style={styles.signupButton}
+                onPress={handleRegister}
+                disabled={loading}
+              >
+                <Text style={styles.signupButtonText}>
+                  {loading ? 'Creating Account...' : 'Sign Up'}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.loginContainer}>
+                <Text style={styles.loginText}>Already have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                  <Text style={styles.loginLink}>Sign In</Text>
+                </TouchableOpacity>
+              </View>
+
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
-    </LinearGradient>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
-  safeArea: {
-    flex: 1,
-  },
-  headerContent: {
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  topSection: {
+    flex: 0.25,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.md,
   },
-  logo: {
-    fontSize: 50,
+  imagePlaceholder: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    ...typography.h1,
-    color: colors.white,
-    marginBottom: spacing.xs,
-    fontSize: 36,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    ...typography.body,
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 16,
+  bottomSection: {
+    flex: 0.75,
+    backgroundColor: '#C2185B', // Deep Pink
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 30,
+    paddingTop: 40,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingBottom: 20,
   },
-  formCard: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    ...shadows.lg,
-  },
-  formTitle: {
-    ...typography.h2,
-    color: colors.text,
-    marginBottom: spacing.xs,
-    textAlign: 'center',
-  },
-  formSubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  registerButton: {
-    marginTop: spacing.lg,
-  },
-  loginLink: {
-    marginTop: spacing.xl,
+  inputWrapper: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    height: 50,
+  },
+  inputIcon: {
+    marginRight: 10,
+    fontSize: 16,
+    color: '#FFF',
+  },
+  input: {
+    flex: 1,
+    color: '#FFF',
+    height: '100%',
+    fontSize: 14,
+  },
+  signupButton: {
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 25,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  signupButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  loginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 10,
   },
   loginText: {
-    ...typography.body,
-    color: colors.textSecondary,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
   },
-  loginButton: {
-    minWidth: 100,
+  loginLink: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
