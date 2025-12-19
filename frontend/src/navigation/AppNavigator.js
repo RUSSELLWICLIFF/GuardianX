@@ -7,6 +7,7 @@ import RegisterScreen from '../screens/signup';
 import HomeScreen from '../screens/home';
 import SosScreen from '../screens/sos';
 import ContactsScreen from '../screens/contact';
+import RouteTrackingScreen from '../screens/RouteTracking';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,7 @@ function MainStack() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="SOS" component={SosScreen} />
       <Stack.Screen name="Contacts" component={ContactsScreen} />
+      <Stack.Screen name="RouteTracking" component={RouteTrackingScreen} />
     </Stack.Navigator>
   );
 }

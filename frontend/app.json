@@ -20,7 +20,18 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "SEND_SMS"
+      ],
+      "package": "com.guardianx.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_GOOGLE_API_KEY"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

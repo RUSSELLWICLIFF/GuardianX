@@ -58,6 +58,13 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.contactsText}>👥 Manage Contacts</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.routeButton}
+          onPress={() => navigation.navigate('RouteTracking')}
+        >
+          <Text style={styles.routeText}>📍 Track My Route</Text>
+        </TouchableOpacity>
+
         <View style={styles.tips}>
           <Text style={styles.tipsTitle}>Safety Tips</Text>
           <Text style={styles.tip}>• Keep phone charged</Text>
@@ -138,6 +145,18 @@ const styles = StyleSheet.create({
   },
   contactsText: {
     color: '#FF4858',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  routeButton: {
+    backgroundColor: '#4A90E2',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  routeText: {
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
