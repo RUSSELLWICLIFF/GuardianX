@@ -1,23 +1,41 @@
 # GuardianX 🛡️
 
-GuardianX is a personal safety application that helps users send instant SOS alerts during emergencies. With a single action, the app shares the user's live location along with an emergency message to up to five trusted contacts.
+GuardianX is a personal safety application designed to provide immediate assistance during emergencies. The app allows users to send instant SOS alerts with real-time location and a custom emergency message to up to five trusted contacts.
 
 ## 🔑 Key Features
 - Add up to 5 emergency contacts
-- One-tap SOS alert system
+- One-tap SOS alert
 - Real-time GPS location sharing
 - Custom emergency message
-- Simple and fast user interface
+- Simple and responsive user interface
 
-## 🎯 Purpose
-The goal of GuardianX is to enhance personal safety by ensuring quick communication and location sharing during critical situations.
+## 🎯 Objective
+GuardianX aims to enhance personal safety by ensuring fast communication and accurate location sharing in critical situations.
 
 ## 🛠️ Tech Stack
-- Platform: (Add platform here)
-- Language: (Add language here)
-- Services: (GPS / Internet / SMS)
+### Frontend
+- React Native
 
-## 📦 Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/RUSSELLWICLIFF/GuardianX.git
+### Backend
+- Node.js
+- Express.js
+
+### Database & Services
+- Firebase
+- GPS & Location Services
+
+## 🔐 Permissions
+- Location access (for real-time tracking)
+- Internet connectivity (for sending SOS alerts)
+
+## 🚀 Future Enhancements
+- Automatic emergency calling
+- Panic button with alarm
+- Live location sharing link
+- Cloud-based contact backup
+
+## 👨‍💻 Author
+**Russell Wicliff**
+
+## 📄 License
+This project is licensed under the MIT License.
