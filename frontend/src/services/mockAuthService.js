@@ -13,6 +13,7 @@ const notifyListeners = () => {
  * Register a new user with email and password
  */
 export const registerUser = async (email, password, name, phone) => {
+    console.log(`[MockBackend] Attempting to register user: ${email}`);
     return new Promise((resolve) => {
         setTimeout(() => {
             const mockUser = {
@@ -24,6 +25,7 @@ export const registerUser = async (email, password, name, phone) => {
             };
 
             currentUser = mockUser;
+            console.log(`[MockBackend] Registration successful. UID: ${mockUser.uid}`);
             notifyListeners();
 
             resolve({ success: true, user: mockUser });
@@ -35,6 +37,7 @@ export const registerUser = async (email, password, name, phone) => {
  * Sign in existing user
  */
 export const loginUser = async (email, password) => {
+    console.log(`[MockBackend] Attempting login for: ${email}`);
     return new Promise((resolve) => {
         setTimeout(() => {
             // Simulate success for any non-empty input
@@ -48,10 +51,12 @@ export const loginUser = async (email, password) => {
                 };
 
                 currentUser = mockUser;
+                console.log(`[MockBackend] Login successful. Welcome back, ${mockUser.displayName}`);
                 notifyListeners();
 
                 resolve({ success: true, user: mockUser });
             } else {
+                console.log(`[MockBackend] Login failed. Invalid credentials.`);
                 resolve({ success: false, error: 'Invalid email or password' });
             }
         }, 1000);
@@ -62,9 +67,11 @@ export const loginUser = async (email, password) => {
  * Sign out current user
  */
 export const logoutUser = async () => {
+    console.log(`[MockBackend] Processing logout request...`);
     return new Promise((resolve) => {
         setTimeout(() => {
             currentUser = null;
+            console.log(`[MockBackend] User logged out successfully.`);
             notifyListeners();
             resolve({ success: true });
         }, 500);
